@@ -1,0 +1,119 @@
+
+; //*****************************************//
+; //                                         //
+; //    带中断处理能力的模型机实验指令文件   //
+; //                                         //
+; //    By TangDu CO.,LTD                    //
+; //                                         //
+; //*****************************************//
+
+; //***** Start Of Main Memory Data *****//
+
+  $P 00 60   ; LDI  R0,13H       将立即数13装入R0
+  $P 01 13
+  $P 02 30   ; OUT  C0H,R0       将R0中的内容写入端口C0中，即写
+  $P 03 C0   ;                   ICW1，边沿触发，单片模式，需要ICW4
+  $P 04 60   ; LDI  R0,30H       将立即数30装入R0
+  $P 05 30
+  $P 06 30   ; OUT  C1H,R0       将R0中的内容写入端口C1中，即写 
+  $P 07 C1   ;                   ICW2，中断向量为30-37
+  $P 08 60   ; LDI  R0,03H       将立即数03装入R0
+  $P 09 03
+  $P 0A 30   ; OUT  C1H,R0       将R0中的内容写入端口C1中，即写
+  $P 0B C1   ;                   ICW4，非缓冲，86模式，自动EOI 
+  $P 0C 60   ; LDI  R0,FEH       将立即数FE装入R0
+  $P 0D FE
+  $P 0E 30   ; OUT  C1H,R0       将R0中的内容写入端口C1中，即写
+  $P 0F C1   ;                   OCW1，只允许IR0请求
+  $P 10 63   ; LDI  SP,A0H       初始化堆栈指针为A0
+  $P 11 A0
+  $P 12 70   ; STI               CPU开中断
+  $P 13 20   ; IN   R0,00H       从端口00（IN单元）读入计数初值
+  $P 14 00
+  $P 15 41   ; LOOP：MOV R1,R0   移动数据，并等待中断
+  $P 16 E0   ; JMP  LOOP         跳转，并等待中断
+  $P 17 15
+
+  ; 以下为中断服务程序：
+  $P 20 80   ; CLI               CPU关中断
+  $P 21 61   ; LDI  R1,01H       将立即数01装入R1
+  $P 22 01
+  $P 23 04   ; ADD  R0,R1        将R0和R1相加，即计数值加1
+  $P 24 30   ; OUT  40H,R0       将计数值输出到端口40（OUT单元）
+  $P 25 40
+  $P 26 70   ; STI               CPU开中断
+  $P 27 B0   ; IRET              中断返回
+  $P 30 20   ;                   IR0的中断入口地址20
+
+; //***** End Of Main Memory Data *****//
+
+
+; //** Start Of MicroController Data **//
+
+  $M 00 0001C1    ; NOP
+  $M 01 000102    ; 中断测试, P<4>	
+  $M 02 006D43    ; PC->AR, PC加1
+  $M 03 107070    ; MEM->IR, P<1>
+  $M 04 002405    ; RS->B
+  $M 05 04B201    ; A加B->RD
+  $M 06 002407    ; RS->B
+  $M 07 013201    ; A与B->RD
+  $M 08 106009    ; MEM->AR
+  $M 09 183001    ; IO->RD
+  $M 0A 106010    ; MEM->AR
+  $M 0B 000001    ; NOP
+  $M 0C 103001    ; MEM->RD
+  $M 0D 200601    ; RD->MEM
+  $M 0E 005341    ; A->PC
+  $M 0F 0000CB    ; NOP, P<3>
+  $M 10 280401    ; RS->IO
+  $M 11 103001    ; MEM->RD
+  $M 12 200413    ; RS->MEM
+  $M 13 001A14    ; SP->A
+  $M 14 06C201    ; A加1->SP
+  $M 15 064216    ; A减1->SP
+  $M 16 006A17    ; SP->AR
+  $M 17 103001    ; MEM->RD
+  $M 18 064219    ; A减1->SP 
+  $M 19 006A1A    ; SP->AR
+  $M 1A 105141    ; MEM->PC
+  $M 1B 005341    ; A->PC
+  $M 1C 10101D    ; MEM->A
+  $M 1D 10608C    ; MEM->AR, P<2>
+  $M 1E 10601F    ; MEM->AR
+  $M 1F 101020    ; MEM->A
+  $M 20 10608C    ; MEM->AR, P<2>
+  $M 22 406A23    ; INTA#, SP->AR
+  $M 23 200C24    ; PC->MEM
+  $M 24 001A25    ; SP->A
+  $M 25 06C226    ; A加1->SP
+  $M 26 406027    ; INTA#, 入口->AR
+  $M 27 105142    ; MEM->PC
+  $M 28 101029    ; MEM->A
+  $M 29 00282A    ; RI->B
+  $M 2A 04E22B    ; A加B->AR
+  $M 2B 04928C    ; A加B->A, P<2>
+  $M 2C 10102D    ; MEM->A
+  $M 2D 002C2E    ; PC->B
+  $M 2E 04E22F    ; A加B->AR
+  $M 2F 04928C    ; A加B->A, P<2>
+  $M 30 001604    ; RD->A
+  $M 31 001606    ; RD->A
+  $M 32 006D48    ; PC->AR, PC加1
+  $M 33 006D4A    ; PC->AR, PC加1
+  $M 34 003401    ; RS->RD
+  $M 35 000035    ; NOP
+  $M 36 006D51    ; PC->AR, PC加1
+  $M 37 000181    ; STI
+  $M 38 0001C1    ; CLI
+  $M 39 006A12    ; SP->AR
+  $M 3A 001A15    ; SP->A
+  $M 3B 001A18    ; SP->A
+  $M 3C 006D5C    ; PC->AR, PC加1
+  $M 3D 006D5E    ; PC->AR, PC加1
+  $M 3E 006D68    ; PC->AR, PC加1
+  $M 3F 006D6C    ; PC->AR, PC加1
+
+; //** End Of MicroController Data **//
+
+

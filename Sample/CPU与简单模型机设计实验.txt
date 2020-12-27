@@ -1,0 +1,38 @@
+
+; //*************************************//
+; //                                     //
+; //     CPU与简单模型机实验指令文件     //
+; //                                     //
+; //     By TangDu CO.,LTD               //
+; //                                     //
+; //*************************************//
+
+; //***** Start Of Main Memory Data *****//
+
+  $P 00 20    ; START: IN  R0   从IN单元读入数据送R0
+  $P 01 00    ; ADD R0,R0       R0和自身相加，结果送R0
+  $P 02 30    ; OUT R0          R0的值送OUT单元显示
+  $P 03 E0    ; JMP START       跳转至00H地址
+  $P 04 00    ; 
+  $P 05 50    ; HLT             停机
+
+; //***** End Of Main Memory Data *****//
+
+
+; //** Start Of MicroController Data **//
+
+  $M 00 000001    ; NOP
+  $M 01 006D43    ; PC->AR,PC加1
+  $M 03 107070    ; MEM->IR, P<1>
+  $M 04 002405    ; R0->B
+  $M 05 04B201    ; A加B->R0
+  $M 1D 105141    ; MEM->PC
+  $M 30 001404    ; R0->A 
+  $M 32 183001    ; IN->R0 
+  $M 33 280401    ; R0->OUT
+  $M 35 000035    ; NOP
+  $M 3C 006D5D    ; PC->AR,PC加1
+
+; //** End Of MicroController Data **//
+
+

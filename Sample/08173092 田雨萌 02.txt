@@ -1,0 +1,39 @@
+
+; //*************************************//
+; //                                     //
+; //        复杂模型机实验指令文件       //
+; //                                     //
+; //        By TangDu CO.,LTD            //
+; //                                     //
+; //*************************************//
+
+; //***** Start Of Main Memory Data *****//
+
+  $P 00 63    ; LDI R3,92H           立即数92H送R3
+  $P 01 92
+  $P 02 4C    ; MOV R0，R3           把R3的值送给R0，R3的值不变
+  $P 03 70    ; INC R0               R0自加1 
+  $p 04 03    ; ADD R3,R0
+  $P 05 3C    ; OUT 42H,R3           和在OUT单元显示
+  $P 06 42   
+  $P 07 50    ; HLT                  停机
+
+; //***** End Of Main Memory Data *****//
+
+
+; //** Start Of MicroController Data **//
+  $M 00 000001    ; NOP
+  $M 01 006D43    ; PC->AR, PC加1
+  $M 03 107070    ; MEM->IR, P<1>
+  $M 36 006D51    ; PC->AR, PC加1
+  $M 11 103001    ; MEM->RD
+  $M 34 003401    ; RS->RD
+  $M 37 001612    ; RD->A
+  $M 12 06B201    ; A加1->RD
+  $M 30 001604    ; RD->A
+  $M 04 002405    ; RS->B
+  $M 05 04B201    ; A加B->RD
+  $M 33 006D4A    ; PC->AR, PC加1
+  $M 0A 106010    ; MEM->AR
+  $M 10 280401    ; RS->IO
+  $M 35 000035    ; NOP
